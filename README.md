@@ -1,4 +1,4 @@
-Based on steps from https://wiki.archlinux.org/title/Hybrid_graphics#Fully_power_down_discrete_GPU
+Based on steps from https://wiki.archlinux.org/title/Hybrid_graphics#Fully_power_down_discrete_GPU and meant to be used with the proprietary nvidia drivers.
 
 `gpu off` will disable the nvidia gpu with udev rules and disable the nvidia-persistenced service.
 
