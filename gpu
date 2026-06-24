@@ -1,0 +1,24 @@
+#!/bin/bash
+FILE=/etc/udev/rules.d/00-remove-nvidia.rules
+if [ "$1" == "off" ] && [ ! -f "$FILE" ]; then
+	sudo systemctl disable nvidia-persistenced > /dev/null 2>&1
+	sudo tee "$FILE" <<-EOF > /dev/null
+	# Remove NVIDIA USB xHCI Host Controller devices, if present
+	ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+
+	# Remove NVIDIA USB Type-C UCSI devices, if present
+	ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+
+	# Remove NVIDIA Audio devices, if present
+	ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+
+	# Remove NVIDIA VGA/3D controller devices
+	ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+	EOF
+elif [ "$1" == "on" ] && [ -f "$FILE" ]; then
+	sudo rm "$FILE"
+	sudo systemctl enable nvidia-persistenced > /dev/null 2>&1
+else
+	echo "Invalid command or already set"
+fi
+
